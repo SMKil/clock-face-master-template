@@ -1,4 +1,4 @@
 <svg class="background">
-  <image href="background.png" />
-  <text id="myLabel" />
+  <image href="dark_pattern.png" />
+  <textarea id="data" />
 </svg>
