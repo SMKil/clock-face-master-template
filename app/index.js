@@ -1,9 +1,9 @@
 import clock from "clock";
-import { HeartRateSensor } from "heart-rate";
 import * as document from "document";
 import { me as appbit } from "appbit";
 import { today } from "user-activity";
 
+import * as sensors from "./sensors.js";
 
 function zeroPad(i) {
     if (i < 10) {
@@ -44,18 +44,6 @@ function validateNull(val) {
     }
 }
 
-function getHeartRate() {
-    if (appbit.permissions.granted("access_heart_rate")) {
-        let hrm = new HeartRateSensor();
-        hrm.start();
-        let heartRate = hrm.heartRate;
-        hrm.stop();
-        return validateNull(heartRate);
-    } else {
-        return "--";
-    }
-}
-
 function getSteps() {
     if (appbit.permissions.granted("access_activity")) {
         return validateNull(today.adjusted.steps);
@@ -86,6 +74,11 @@ clock.granularity = "seconds";
 // Get handle to the <text> element
 const data = document.getElementById("data");
 
+// Create a new instance of the HeartRate class
+const heartRate = new sensors.HeartRate();
+const accelerometer = new sensors.Accel()
+const barometer = new sensors.Baro()
+
 // Update the <text> element every tick
 clock.ontick = (evt) => {
     let text = "";
@@ -99,9 +92,17 @@ clock.ontick = (evt) => {
     let { day, month, year } = getDate(today);
     text += `Date: ${day}-${month}-${year}\n`;
 
-    // Get the heart rate
-    let heartRate = getHeartRate();
-    text += `Heart Rate: ${heartRate}`;
+    // Get the heart rate data
+    text += `Heart Rate: ${validateNull(heartRate.data)}`;
+
+    // Get the accelerometer data
+    let { x, y, z } = accelerometer.data;
+    text += `\nAccel: ${validateNull(x)}, ${validateNull(y)}, ${validateNull(z)}`;
+
+    // Get the barometer data
+    let { pressure } = barometer.data;
+    text += `\nBarometer: ${validateNull(pressure)}`;
+
 
     // Get steps
     let steps = getSteps();
