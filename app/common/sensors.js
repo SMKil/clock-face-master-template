@@ -1,4 +1,5 @@
 import { me as appbit } from "appbit";
+import { sqrt, square } from "scientific";
 
 import { display } from "display";
 import { BodyPresenceSensor } from "body-presence";
@@ -64,7 +65,7 @@ export class HeartRate {
     }
 
     // Define a getter property heartRate
-    get data() {
+    get value() {
         return this._heartRate;
     }
 }
@@ -129,6 +130,14 @@ export class Accel {
     get data() {
         return this._accelData;
     }
+
+    // Define a getter property for absolute acceleration
+    get value() {
+        if (this._accelData.x === null || this._accelData.y === null || this._accelData.z === null) {
+            return null;
+        }
+        return sqrt(square(this._accelData.x) + square(this._accelData.y) + square(this._accelData.z));
+    }
 }
 
 // Define a class to encapsulate the Barometer sensor
@@ -139,14 +148,14 @@ export class Baro {
             this._baro = new Barometer({ frequency: freq });
 
             // Declare a property to store current barometer and several on/off-states
-            this._baroData = {pressure: null};
+            this._pressure = {pressure: null};
             this._isBodyPresent = false;
             this._isDisplayOn = true;
             this._isBaroOn = false;
 
             // Add an event listener for the barometer event
             this._baro.addEventListener("reading", () => {
-                this._baroData = this._baro.pressure;
+                this._pressure = this._baro.pressure;
             });
 
             // Use BodyPrecence to control sensor state
@@ -183,12 +192,12 @@ export class Baro {
         } else {
             this._baro.stop();
             this._isBaroOn = false;
-            this._baroData = {pressure: null};
+            this._pressure = {pressure: null};
         }
     }
 
     // Define a getter property baroData
-    get data() {
-        return this._baroData;
+    get value() {
+        return this._pressure;
     }
 }

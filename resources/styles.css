@@ -3,9 +3,9 @@
 }
 
 #data {
-  font-size: 32;
+  font-size: 24;
   font-family: System-Bold;
-  text-length: 200;
+  text-length: 500;
   /* text-anchor: middle; */
   display-align: before;
   x: 30;

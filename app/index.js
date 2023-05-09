@@ -1,72 +1,9 @@
 import clock from "clock";
 import * as document from "document";
-import { me as appbit } from "appbit";
-import { today } from "user-activity";
 
-import * as sensors from "./sensors.js";
-
-function zeroPad(i) {
-    if (i < 10) {
-        i = "0" + i;
-    }
-    return i;
-}
-
-function getTime(date) {
-    let hours = date.getHours();
-    let mins = zeroPad(date.getMinutes());
-    let secs = zeroPad(date.getSeconds());
-    let ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    return {
-        "hours": hours,
-        "mins": mins,
-        "secs": secs,
-    }
-}
-
-function getDate(date) {
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear();
-    return {
-        "day": day,
-        "month": month,
-        "year": year,
-    }
-}
-
-function validateNull(val) {
-    if (val === null) {
-        return "--";
-    } else {
-        return val;
-    }
-}
-
-function getSteps() {
-    if (appbit.permissions.granted("access_activity")) {
-        return validateNull(today.adjusted.steps);
-    } else {
-        return "--";
-    }
-}
-
-function getCals() {
-    if (appbit.permissions.granted("access_activity")) {
-        return validateNull(today.adjusted.calories);
-    } else {
-        return "--";
-    }
-}
-
-function getFloors() {
-    if (appbit.permissions.granted("access_activity")) {
-        return validateNull(today.adjusted.elevationGain);
-    } else {
-        return "--";
-    }
-}
+import { getTime, getDate, validateNull } from "./common/utils.js";
+import * as sensors from "./common/sensors.js";
+import * as userActivity from "./common/userActivity.js";
 
 // Update the clock very second
 clock.granularity = "seconds";
@@ -74,10 +11,12 @@ clock.granularity = "seconds";
 // Get handle to the <text> element
 const data = document.getElementById("data");
 
-// Create a new instance of the HeartRate class
+// Instantiate data sources and sensors
+const activity = new userActivity.Activity();
 const heartRate = new sensors.HeartRate();
 const accelerometer = new sensors.Accel()
 const barometer = new sensors.Baro()
+
 
 // Update the <text> element every tick
 clock.ontick = (evt) => {
@@ -90,31 +29,29 @@ clock.ontick = (evt) => {
 
     // Get current date
     let { day, month, year } = getDate(today);
-    text += `Date: ${day}-${month}-${year}\n`;
+    text += `Date: ${day}/${month}${year}\n`;
 
     // Get the heart rate data
-    text += `Heart Rate: ${validateNull(heartRate.data)}`;
+    text += `Heart Rate: ${validateNull(heartRate.value)}`;
 
     // Get the accelerometer data
-    let { x, y, z } = accelerometer.data;
-    text += `\nAccel: ${validateNull(x)}, ${validateNull(y)}, ${validateNull(z)}`;
+    text += `\nAbs. accel: ${validateNull(accelerometer.value)}`;
 
     // Get the barometer data
-    let { pressure } = barometer.data;
-    text += `\nBarometer: ${validateNull(pressure)}`;
+    text += `\nBarometer: ${validateNull(barometer.value)}`;
 
+    // Get the user's primary goal
+    text += `\nPrimary goal: ${activity.primaryGoal}`;
 
-    // Get steps
-    let steps = getSteps();
-    text += `\nSteps: ${steps}`;
+    // Get todays steps vs. goal
+    text += `\nSteps: ${validateNull(activity.today.steps())} / ${validateNull(activity.todayGoals.steps())}`;
 
-    // Get calories
-    let calories = getCals();
-    text += `\nCalories: ${calories}`;
+    // Get todays calories vs. goal
+    text += `\nCalories: ${validateNull(activity.today.calories())} / ${validateNull(activity.todayGoals.calories())}`;
 
-    // Get floors
-    let floors = getFloors();
-    text += `\nFloors: ${floors}`;
+    // Get todays floors vs. goal
+    text += `\nFloors: ${validateNull(activity.today.elevationGain())} / ${validateNull(activity.todayGoals.elevationGain())}`;
+
 
     // Update the <text> element
     // console.log(text);
