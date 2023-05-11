@@ -1,9 +1,5 @@
 import { me as appbit } from "appbit";
-import { week } from "user-activity";
-import { weekGoals } from "user-activity";
-import { today } from "user-activity";
-import { primaryGoal } from "user-activity";
-import { goals } from "user-activity";
+import { primaryGoal, goals, weekGoals, today, week } from "user-activity";
 
 export class Activity {
     constructor() {
@@ -32,6 +28,34 @@ export class Activity {
                 distance: () => week.adjusted.distance,
                 elevationGain: () => week.adjusted.elevationGain,
                 activeZoneMins: () => week.adjusted.activeMinutes,
+            }
+        } else {
+            console.log("access_activity permission denied");
+
+            this.primaryGoal = () => null;
+            this.todayGoals = {
+                steps: () => null,
+                calories: () => null,
+                distance: () => null,
+                elevationGain: () => null,
+                activeZoneMins: () => null,
+            }
+            this.weekGoals = {
+                activeZoneMins: () => null,
+            }
+            this.today = {
+                steps: () => null,
+                calories: () => null,
+                distance: () => null,
+                elevationGain: () => null,
+                activeZoneMins: () => null,
+            }
+            this.week = {
+                steps: () => null,
+                calories: () => null,
+                distance: () => null,
+                elevationGain: () => null,
+                activeZoneMins: () => null,
             }
         }
     }

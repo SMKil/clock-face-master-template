@@ -16,6 +16,7 @@ const activity = new userActivity.Activity();
 const heartRate = new sensors.HeartRate();
 const accelerometer = new sensors.Accel()
 const barometer = new sensors.Baro()
+const gyro = new sensors.Gyro()
 
 
 // Update the <text> element every tick
@@ -25,17 +26,20 @@ clock.ontick = (evt) => {
     // Get current time
     let today = evt.date;
     let { hours, mins, secs } = getTime(today);
-    text += `Clock: ${hours}:${mins}:${secs}\n`;
+    text += `Clock: ${hours}:${mins}:${secs}`;
 
     // Get current date
     let { day, month, year } = getDate(today);
-    text += `Date: ${day}/${month}${year}\n`;
+    text += `\nDate: ${day}/${month}${year}`;
 
     // Get the heart rate data
-    text += `Heart Rate: ${validateNull(heartRate.value)}`;
+    text += `\nHeart Rate: ${validateNull(heartRate.value)}`;
 
     // Get the accelerometer data
-    text += `\nAbs. accel: ${validateNull(accelerometer.value)}`;
+    text += `\nAbs. accel: ${validateNull(accelerometer.valueAbs)}`;
+
+    // Get the orientation data
+    text += `\nOrientation: ${validateNull(gyro.valueOrient)}`;
 
     // Get the barometer data
     text += `\nBarometer: ${validateNull(barometer.value)}`;
@@ -51,7 +55,6 @@ clock.ontick = (evt) => {
 
     // Get todays floors vs. goal
     text += `\nFloors: ${validateNull(activity.today.elevationGain())} / ${validateNull(activity.todayGoals.elevationGain())}`;
-
 
     // Update the <text> element
     // console.log(text);
