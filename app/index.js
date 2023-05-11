@@ -1,5 +1,6 @@
-import clock from "clock";
 import * as document from "document";
+import clock from "clock";
+import { battery } from "power";
 
 import { getTime, getDate, validateNull } from "./common/utils.js";
 import * as sensors from "./common/sensors.js";
@@ -31,6 +32,9 @@ clock.ontick = (evt) => {
     // Get current date
     let { day, month, year } = getDate(today);
     text += `\nDate: ${day}/${month}${year}`;
+
+    // Get the battery level and charging state
+    text += `\nBattery: ${battery.chargeLevel}% (${battery.charging ? "charging" : "discharging"})`;
 
     // Get the heart rate data
     text += `\nHeart Rate: ${validateNull(heartRate.value)}`;
