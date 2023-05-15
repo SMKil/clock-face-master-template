@@ -10,24 +10,24 @@ export class Activity {
                 calories: () => goals.calories,
                 distance: () => goals.distance,
                 elevationGain: () => goals.elevationGain,
-                activeZoneMins: () => goals.activeMinutes,
+                activeZoneMins: () => goals.activeZoneMinutes.total,
             }
             this.weekGoals = {
-                activeZoneMins: () => weekGoals.activeMinutes,
+                activeZoneMins: () => weekGoals.activeZoneMinutes.total,
             }
             this.today = {
                 steps: () => today.adjusted.steps,
                 calories: () => today.adjusted.calories,
                 distance: () => today.adjusted.distance,
                 elevationGain: () => today.adjusted.elevationGain,
-                activeZoneMins: () => today.adjusted.activeMinutes,
+                activeZoneMins: () => today.adjusted.activeZoneMinutes.total,
             }
             this.week = {
                 steps: () => week.adjusted.steps,
                 calories: () => week.adjusted.calories,
                 distance: () => week.adjusted.distance,
                 elevationGain: () => week.adjusted.elevationGain,
-                activeZoneMins: () => week.adjusted.activeMinutes,
+                activeZoneMins: () => week.adjusted.activeZoneMinutes.total,
             }
         } else {
             console.log("access_activity permission denied");
